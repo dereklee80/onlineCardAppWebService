@@ -37,3 +37,29 @@ app.get('/allcards', async (req, res) => {
         res.status(500).json({ message: 'Server error for allcards' });
     }
 });
+
+// Example Route: Create a new card
+app.post('/addcard', async (req, res) => {
+    const { card_name, card_pic } = req.body;
+    try {
+        let connection = await mysql.createConnection(dbConfig);
+        await connection.execute('INSERT INTO cards (card_name, card_pic) VALUES (?, ?)', [card_name, card_pic]);
+        res.status(201).json({ message: 'Card '+card_name+' added successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error - could not add card '+card_name });
+    }
+});
+
+// Example Route: Delete a card
+app.delete('/deletecard/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        let connection = await mysql.createConnection(dbConfig);
+        await connection.execute('DELETE FROM cards WHERE id='+id);
+        res.status(201).json({ message: 'Card '+card_name+' deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error - could not delete card '+card_name });
+    }
+});
